@@ -27,7 +27,7 @@ export const formatSecond = (date: Date) => {
 };
 
 export const formatMillisecond = (date: Date) => {
-  return ("0000" + date.getMilliseconds()).slice(-4);
+  return ("000" + date.getMilliseconds()).slice(-3);
 };
 
 export const formatTimestamp = (date: Date) => {

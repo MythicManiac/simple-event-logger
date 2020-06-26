@@ -1,7 +1,7 @@
 export interface EventData {
   id: string;
   timestamp: Date;
-  title?: string;
+  title: string;
   messages: any[];
-  messageTitles?: string[];
+  messageTitles: string[];
 }
