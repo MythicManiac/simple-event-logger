@@ -7,7 +7,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.ts?$/,
+        test: /.tsx?$/,
         use: "ts-loader",
         exclude: /node_modules/
       }
@@ -15,11 +15,13 @@ module.exports = {
   },
   externals: [nodeExternals()],
   resolve: {
-    extensions: [".ts", ".js"]
+    extensions: [".ts", ".js", ".tsx"],
+    alias: {
+      "@server": path.resolve(__dirname, "./src/server")
+    }
   },
   output: {
     filename: "index.js",
     path: path.resolve(__dirname, "bin")
-  },
-  target: "node"
+  }
 };

@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "strict": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "baseUrl": "src",
+    "paths": {
+      "@client/*": ["client/*"],
+      "@server/*": ["server/*"],
+      "@common/*": ["common/*"]
+    }
   }
 }
