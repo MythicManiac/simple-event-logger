@@ -94,6 +94,25 @@ class _EventStore {
       .then(data => this.setEvents(data));
   }
 
+  save() {
+    localStorage.setItem("pinnedEvents", JSON.stringify(this.pinnedEvents));
+  }
+
+  load() {
+    const savedData = localStorage.getItem("pinnedEvents");
+    if (savedData) {
+      try {
+        const serializedEvents = JSON.parse(savedData);
+        for (const serializedEvent of serializedEvents) {
+          const event = deserializeEventData(serializedEvent);
+          this._pinnedEvents.set(event.id, event);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
   @action
   toggleEventPin(event: EventData) {
     if (this._pinnedEvents.has(event.id)) {
@@ -101,6 +120,7 @@ class _EventStore {
     } else {
       this._pinnedEvents.set(event.id, event);
     }
+    this.save();
   }
 }
 export const EventStore = new _EventStore();

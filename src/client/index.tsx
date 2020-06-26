@@ -9,6 +9,7 @@ import "@client/websocket";
 const appDiv = document.createElement("div");
 document.body.appendChild(appDiv);
 document.body.setAttribute("style", "margin: 0;");
+EventStore.load();
 EventStore.refreshEvents();
 
 ReactDOM.render(<App />, appDiv);
