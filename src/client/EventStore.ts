@@ -1,15 +1,7 @@
 import { action, computed, observable } from "mobx";
 import { EventData } from "@common/event";
-
-declare var BACKEND_HOST: string | undefined;
-
-interface SerializedEventData {
-  id: string;
-  timestamp: string;
-  title: string;
-  messages: any[];
-  messageTitles: string[];
-}
+import { API_HOST } from "@client/consts";
+import { deserializeEventData } from "@client/serialization";
 
 class _EventStore {
   @observable
@@ -96,16 +88,9 @@ class _EventStore {
   }
 
   refreshEvents() {
-    return fetch(`${BACKEND_HOST || ""}/api/event/`)
+    return fetch(`${API_HOST}/api/event/`)
       .then(response => response.json())
-      .then(entries =>
-        entries.map((entry: SerializedEventData) => {
-          return {
-            ...entry,
-            timestamp: new Date(Date.parse(entry.timestamp))
-          };
-        })
-      )
+      .then(entries => entries.map(deserializeEventData))
       .then(data => this.setEvents(data));
   }
 

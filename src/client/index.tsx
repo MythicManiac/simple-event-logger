@@ -4,6 +4,7 @@ import * as ReactDOM from "react-dom";
 
 import { App } from "@client/components/app";
 import { EventStore } from "@client/EventStore";
+import "@client/websocket";
 
 const appDiv = document.createElement("div");
 document.body.appendChild(appDiv);

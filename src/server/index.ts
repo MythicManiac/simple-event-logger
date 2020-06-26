@@ -1,12 +1,18 @@
 import express = require("express");
+const app: express.Application = express();
+
 import bodyParser = require("body-parser");
 import cors = require("cors");
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+
 import { enrichEvent, ValidatedData } from "../common/event";
+import { WebsocketEventType } from "../common/consts";
+import { Socket } from "socket.io";
 
 const LISTEN_PORT = 8090;
 const MAX_HISTORY = 30;
 
-const app: express.Application = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static("./dist"));
@@ -59,6 +65,13 @@ function validateIncomingEventData(
   }
 }
 
+io.on("connection", (socket: Socket) => {
+  console.log("Client connected");
+  socket.on("disconnect", reason => {
+    console.log(`Client disconnected: ${reason}`);
+  });
+});
+
 app.post("/api/event/", (req, res) => {
   const result = validateIncomingEventData(req.body);
   if (result.errors) {
@@ -67,7 +80,9 @@ app.post("/api/event/", (req, res) => {
     if (events.length == MAX_HISTORY) {
       events.shift();
     }
-    events.push(enrichEvent(result.validatedData));
+    const enriched = enrichEvent(result.validatedData);
+    events.push(enriched);
+    io.emit(WebsocketEventType.EVENT_LOG_ENTRY, enriched);
     if (events.length > MAX_HISTORY) {
       events = events.slice(Math.max(events.length - MAX_HISTORY, 0));
     }
@@ -79,6 +94,6 @@ app.get("/api/event/", (req, res) => {
   res.send(JSON.stringify(events));
 });
 
-app.listen(LISTEN_PORT, () => {
+http.listen(LISTEN_PORT, () => {
   console.log(`Listening on port ${LISTEN_PORT}`);
 });
