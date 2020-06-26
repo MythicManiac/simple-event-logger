@@ -9,17 +9,17 @@ module.exports = {
       {
         test: /.ts?$/,
         use: "ts-loader",
-        exclude: /node_modules/,
-      },
-    ],
+        exclude: /node_modules/
+      }
+    ]
   },
   externals: [nodeExternals()],
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".js"]
   },
   output: {
     filename: "index.js",
-    path: path.resolve(__dirname, "bin"),
+    path: path.resolve(__dirname, "bin")
   },
   target: "node"
 };

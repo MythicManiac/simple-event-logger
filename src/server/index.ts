@@ -28,7 +28,7 @@ app.post("/api/event/", (req, res) => {
       }
       events.push({
         timestamp: new Date(),
-        messages: req.body.messages,
+        messages: req.body.messages
       });
       res.send({ result: "success" });
     } else {
