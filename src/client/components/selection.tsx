@@ -1,0 +1,95 @@
+import * as React from "react";
+
+import styled from "styled-components";
+import { AppBar, Box, Tab, Tabs, Typography } from "@material-ui/core";
+import { EventData } from "@common/event";
+import { useState } from "react";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`selection-tabpanel-${index}`}
+      aria-labelledby={`selection-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <pre>{children}</pre>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function makeTabProps(index: any) {
+  return {
+    id: `selection-tab-${index}`,
+    "aria-controls": `selection-tabpanel-${index}`
+  };
+}
+
+export interface SelectionViewProps {
+  selectedEvent?: EventData;
+}
+
+export const SelectionView = (props: SelectionViewProps) => {
+  const event = props.selectedEvent;
+  if (!event) {
+    return <SelectionViewBox>No event selected</SelectionViewBox>;
+  }
+  if (event.messages.length < 0) {
+    return <SelectionViewBox>Event has no messages</SelectionViewBox>;
+  }
+
+  const [tab, setTab] = useState(0);
+
+  const getMessageTitle = (index: number) => {
+    if (event.messageTitles && event.messageTitles.length < index) {
+      return event.messageTitles[index];
+    } else {
+      return `Message ${index + 1}`;
+    }
+  };
+
+  return (
+    <SelectionViewBox>
+      <AppBar position="static">
+        <Tabs
+          value={tab}
+          onChange={(_, newTab) => setTab(newTab)}
+          aria-label="simple tabs example"
+        >
+          {event.messages.map((_, index) => (
+            <Tab
+              key={index}
+              label={getMessageTitle(index)}
+              {...makeTabProps(index)}
+              wrapped={true}
+            />
+          ))}
+        </Tabs>
+      </AppBar>
+      {event.messages.map((message, index) => (
+        <TabPanel value={tab} index={index}>
+          {typeof message === "string"
+            ? message
+            : JSON.stringify(message, null, 2)}
+        </TabPanel>
+      ))}
+    </SelectionViewBox>
+  );
+};
+
+const SelectionViewBox = styled(Box)`
+  width: 100%;
+`;
