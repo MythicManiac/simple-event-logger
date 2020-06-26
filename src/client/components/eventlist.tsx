@@ -12,6 +12,8 @@ import styled from "styled-components";
 import { useState } from "react";
 import TurnedInNotIcon from "@material-ui/icons/TurnedInNot";
 import TurnedInIcon from "@material-ui/icons/TurnedIn";
+import { observer } from "mobx-react";
+import { EventStore } from "@client/EventStore";
 
 export const formatHour = (date: Date) => {
   return ("00" + date.getHours()).slice(-2);
@@ -35,39 +37,14 @@ export const formatTimestamp = (date: Date) => {
   )}.${formatMillisecond(date)}`;
 };
 
-export interface EventsViewProps {
-  events: EventData[];
-  onSelect?: (event: EventData) => void;
-}
-export const EventsView = (props: EventsViewProps) => {
-  const [selectedId, setSelectedId] = useState<string | undefined>();
-  const [pinnedEvents] = useState<Set<string>>(new Set());
-
-  // This is used only to trigger a refresh
-  const [lastPinAction, setLastPinAction] = useState<string>();
-
-  const toggleEventPin = (event: EventData) => {
-    if (pinnedEvents.has(event.id)) {
-      pinnedEvents.delete(event.id);
-      setLastPinAction(`${event.id}-removed`);
-    } else {
-      pinnedEvents.add(event.id);
-      setLastPinAction(`${event.id}-added`);
-    }
-  };
-
-  const sortedEvents = props.events.sort((a, b) => {
-    return +pinnedEvents.has(a.id) - +pinnedEvents.has(b.id);
-  });
-
+export const EventsView = observer(() => {
   const renderItem = (event: EventData) => {
     return (
       <ListItem
         button={true}
-        selected={event.id === selectedId}
+        selected={EventStore.selectedEventId === event.id}
         onClick={() => {
-          setSelectedId(event.id);
-          if (props.onSelect) props.onSelect(event);
+          EventStore.selectEvent(event);
         }}
       >
         <ListItemText
@@ -78,9 +55,9 @@ export const EventsView = (props: EventsViewProps) => {
           <IconButton
             edge="end"
             aria-label="delete"
-            onClick={() => toggleEventPin(event)}
+            onClick={() => EventStore.toggleEventPin(event)}
           >
-            {pinnedEvents.has(event.id) ? (
+            {EventStore.isPinned(event) ? (
               <TurnedInIcon />
             ) : (
               <TurnedInNotIcon />
@@ -93,19 +70,27 @@ export const EventsView = (props: EventsViewProps) => {
 
   return (
     <EventList dense={true}>
-      {sortedEvents.map((_, index, array) => {
+      {EventStore.pinnedEvents.map(event => {
+        return (
+          <React.Fragment key={event.id}>
+            {renderItem(event)}
+            <Divider />
+          </React.Fragment>
+        );
+      })}
+      {EventStore.events.map((_, index, array) => {
         const i = array.length - 1 - index;
         const event = array[i];
         return (
           <React.Fragment key={event.id}>
             {renderItem(event)}
-            {i > 0 && <Divider />}
+            <Divider />
           </React.Fragment>
         );
       })}
     </EventList>
   );
-};
+});
 
 const EventList = styled(List)`
   width: 100%;

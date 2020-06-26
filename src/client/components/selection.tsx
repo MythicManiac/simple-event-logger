@@ -2,8 +2,9 @@ import * as React from "react";
 
 import styled from "styled-components";
 import { AppBar, Box, Tab, Tabs, Typography } from "@material-ui/core";
-import { EventData } from "@common/event";
 import { useState } from "react";
+import { observer } from "mobx-react";
+import { EventStore } from "@client/EventStore";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -38,12 +39,9 @@ function makeTabProps(index: any) {
   };
 }
 
-export interface SelectionViewProps {
-  selectedEvent?: EventData;
-}
-
-export const SelectionView = (props: SelectionViewProps) => {
-  const event = props.selectedEvent;
+export const SelectionView = observer(() => {
+  const [tab, setTab] = useState(0);
+  const event = EventStore.selectedEvent;
 
   if (!event) {
     return (
@@ -59,8 +57,6 @@ export const SelectionView = (props: SelectionViewProps) => {
       </CenteredTextBox>
     );
   }
-
-  const [tab, setTab] = useState(0);
 
   const getMessageTitle = (index: number) => {
     if (event.messageTitles && event.messageTitles.length < index) {
@@ -98,7 +94,7 @@ export const SelectionView = (props: SelectionViewProps) => {
       ))}
     </SelectionViewBox>
   );
-};
+});
 
 const SelectionViewBox = styled(Box)`
   width: 100%;
