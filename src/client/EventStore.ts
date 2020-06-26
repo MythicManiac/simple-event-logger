@@ -11,6 +11,12 @@ class _EventStore {
   @observable
   private _selectedEvent: EventData | undefined;
 
+  @observable
+  private _maximumEvents = 30;
+
+  @observable
+  private _isLogging = true;
+
   @computed
   public get events(): EventData[] {
     return this._events.filter(x => !this._pinnedEvents.has(x.id));
@@ -30,8 +36,13 @@ class _EventStore {
 
   @computed
   public get selectedEventId(): string | undefined {
-    // if (this.selectedEvent) return this.selectedEvent.id;
+    if (this.selectedEvent) return this.selectedEvent.id;
     return undefined;
+  }
+
+  @computed
+  public get isLogging(): boolean {
+    return this._isLogging;
   }
 
   isPinned(event: EventData): boolean {
@@ -44,8 +55,24 @@ class _EventStore {
   }
 
   @action
+  setIsLogging(isLogging: boolean) {
+    this._isLogging = isLogging;
+  }
+
+  @action
+  clearUnpinned() {
+    this._events = [];
+  }
+
+  @action
   addEvent(event: EventData) {
+    if (!this._isLogging) return;
     this._events.push(event);
+    if (this._events.length > this._maximumEvents) {
+      this._events = this._events.slice(
+        Math.max(this._events.length - this._maximumEvents, 0)
+      );
+    }
   }
 
   @action

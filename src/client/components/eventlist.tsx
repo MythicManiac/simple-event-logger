@@ -9,7 +9,6 @@ import {
   ListItemText
 } from "@material-ui/core";
 import styled from "styled-components";
-import { useState } from "react";
 import TurnedInNotIcon from "@material-ui/icons/TurnedInNot";
 import TurnedInIcon from "@material-ui/icons/TurnedIn";
 import { observer } from "mobx-react";

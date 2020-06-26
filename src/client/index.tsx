@@ -10,20 +10,21 @@ const appDiv = document.createElement("div");
 document.body.appendChild(appDiv);
 document.body.setAttribute("style", "margin: 0;");
 
+let NEXT_ID = 0;
 const getDummyEvents = (count: number): EventData[] => {
   const result = [];
   for (let i = 0; i < count; i++) {
     result.push({
-      id: i.toString(),
-      title: `Event ${i} with a title`,
-      timestamp: new Date(new Date().getTime() + i * 1000),
+      id: NEXT_ID.toString(),
+      title: `Event ${NEXT_ID} with a title`,
+      timestamp: new Date(new Date().getTime() + NEXT_ID * 1000),
       messages: [
         {
-          someRequestData: `Hello request ${i}`,
+          someRequestData: `Hello request ${NEXT_ID}`,
           someMoreRequestData: "Goodbye"
         },
         {
-          someResponseData: `Hello response ${i}`
+          someResponseData: `Hello response ${NEXT_ID}`
         },
         "Just a string",
         "Just a string",
@@ -37,6 +38,7 @@ const getDummyEvents = (count: number): EventData[] => {
         "Just a string"
       ]
     });
+    NEXT_ID += 1;
   }
   return result;
 };
@@ -45,4 +47,10 @@ for (const event of getDummyEvents(5)) {
   EventStore.addEvent(event);
 }
 
+const addEventLoop = () => {
+  EventStore.addEvent(getDummyEvents(1)[0]);
+  setTimeout(addEventLoop, 100);
+};
+
 ReactDOM.render(<App />, appDiv);
+addEventLoop();

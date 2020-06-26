@@ -4,13 +4,49 @@ import {
   AppBar,
   Box,
   CssBaseline,
+  IconButton,
   Toolbar,
   Typography
 } from "@material-ui/core";
 import styled from "styled-components";
+import PauseIcon from "@material-ui/icons/PauseCircleFilled";
+import RecordIcon from "@material-ui/icons/PlayCircleFilled";
+import ClearIcon from "@material-ui/icons/DeleteSweep";
 
 import { EventsView } from "@client/components/eventlist";
 import { SelectionView } from "@client/components/selection";
+import { observer } from "mobx-react";
+import { EventStore } from "@client/EventStore";
+
+export const ToolbarButtons = observer(() => {
+  const toggleLogging = () => {
+    EventStore.setIsLogging(!EventStore.isLogging);
+  };
+
+  const clearHistory = () => {
+    EventStore.clearUnpinned();
+  };
+
+  return (
+    <>
+      <IconButton
+        color="inherit"
+        aria-label="toggle log capture"
+        onClick={toggleLogging}
+      >
+        {EventStore.isLogging ? <PauseIcon /> : <RecordIcon />}
+      </IconButton>
+
+      <IconButton
+        color="inherit"
+        aria-label="clear history"
+        onClick={clearHistory}
+      >
+        <ClearIcon />
+      </IconButton>
+    </>
+  );
+});
 
 export const App = () => {
   return (
@@ -20,7 +56,8 @@ export const App = () => {
         <Box>
           <AppBar position="static">
             <Toolbar>
-              <Typography variant="h6">Simple Event Logger</Typography>
+              <Title variant="h6">Simple Event Logger</Title>
+              <ToolbarButtons />
             </Toolbar>
           </AppBar>
         </Box>
@@ -32,6 +69,10 @@ export const App = () => {
     </>
   );
 };
+
+const Title = styled(Typography)`
+  margin-right: 20px;
+`;
 
 const FulscreenBox = styled(Box)`
   position: absolute;
