@@ -2,7 +2,7 @@ import * as React from "react";
 
 import styled from "styled-components";
 import { AppBar, Box, Tab, Tabs, Typography } from "@material-ui/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { EventStore } from "@client/EventStore";
 
@@ -42,6 +42,10 @@ function makeTabProps(index: any) {
 export const SelectionView = observer(() => {
   const [tab, setTab] = useState(0);
   const event = EventStore.selectedEvent;
+
+  useEffect(() => {
+    setTab(0);
+  }, [event]);
 
   if (!event) {
     return (
