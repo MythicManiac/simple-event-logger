@@ -3,8 +3,10 @@ const app: express.Application = express();
 
 import bodyParser = require("body-parser");
 import cors = require("cors");
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+import http = require("http");
+const server = http.createServer(app);
+import socketIo = require("socket.io");
+const io = socketIo(server);
 
 import { enrichEvent, ValidatedData } from "../common/event";
 import { WebsocketEventType } from "../common/consts";
@@ -94,6 +96,6 @@ app.get("/api/event/", (req, res) => {
   res.send(JSON.stringify(events));
 });
 
-http.listen(LISTEN_PORT, () => {
+server.listen(LISTEN_PORT, () => {
   console.log(`Listening on port ${LISTEN_PORT}`);
 });
