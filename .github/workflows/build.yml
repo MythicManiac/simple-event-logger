@@ -1,0 +1,25 @@
+name: Publish Docker
+
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: mythicmaniac/simple-logging-server
+    steps:
+      - uses: actions/checkout@v1
+      - name: Login to DockerHub Registry
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Get release name
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
+      - name: Build the Docker image
+        run: docker build . -t simple-logging-server
+      - name: Tag the built image with the release tag
+        run: docker tag simple-logging-server $IMAGE_NAME:${{ steps.vars.outputs.tag }}
+      - name: Tag the built image with the latest tag
+        run: docker tag simple-logging-server $IMAGE_NAME:latest
+      - name: Push images
+        run: docker push $IMAGE_NAME:${{ steps.vars.outputs.tag }} && docker push $IMAGE_NAME:latest
