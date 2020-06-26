@@ -1,6 +1,16 @@
 import { action, computed, observable } from "mobx";
 import { EventData } from "@common/event";
 
+declare var BACKEND_HOST: string | undefined;
+
+interface SerializedEventData {
+  id: string;
+  timestamp: string;
+  title: string;
+  messages: any[];
+  messageTitles: string[];
+}
+
 class _EventStore {
   @observable
   private _events: EventData[] = [];
@@ -73,6 +83,30 @@ class _EventStore {
         Math.max(this._events.length - this._maximumEvents, 0)
       );
     }
+  }
+
+  @action
+  setEvents(events: EventData[]) {
+    this._events = events;
+    if (this._events.length > this._maximumEvents) {
+      this._events = this._events.slice(
+        Math.max(this._events.length - this._maximumEvents, 0)
+      );
+    }
+  }
+
+  refreshEvents() {
+    return fetch(`${BACKEND_HOST || ""}/api/event/`)
+      .then(response => response.json())
+      .then(entries =>
+        entries.map((entry: SerializedEventData) => {
+          return {
+            ...entry,
+            timestamp: new Date(Date.parse(entry.timestamp))
+          };
+        })
+      )
+      .then(data => this.setEvents(data));
   }
 
   @action

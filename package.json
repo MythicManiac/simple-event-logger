@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node-dev src/server/index.ts",
-    "webpack": "webpack-dev-server --config webpack.client.js --port 8091",
+    "webpack": "webpack-dev-server --env.BACKEND_HOST=http://localhost:8090 --config webpack.client.js --port 8091",
     "build:client": "webpack --config webpack.client.js --mode production",
     "build:server": "webpack --config webpack.server.js --mode production"
   },
@@ -30,7 +30,9 @@
   "dependencies": {
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
+    "@types/cors": "^2.8.6",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "mobx": "^5.15.4",
     "mobx-react": "^6.2.2",

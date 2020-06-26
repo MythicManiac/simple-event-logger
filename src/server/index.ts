@@ -1,11 +1,13 @@
 import express = require("express");
 import bodyParser = require("body-parser");
+import cors = require("cors");
 import { enrichEvent, ValidatedData } from "../common/event";
 
 const LISTEN_PORT = 8090;
 const MAX_HISTORY = 30;
 
 const app: express.Application = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static("./dist"));
 
