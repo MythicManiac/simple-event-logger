@@ -44,11 +44,20 @@ export interface SelectionViewProps {
 
 export const SelectionView = (props: SelectionViewProps) => {
   const event = props.selectedEvent;
+
   if (!event) {
-    return <SelectionViewBox>No event selected</SelectionViewBox>;
+    return (
+      <CenteredTextBox>
+        <Typography variant="h6">No event selected</Typography>
+      </CenteredTextBox>
+    );
   }
   if (event.messages.length < 0) {
-    return <SelectionViewBox>Event has no messages</SelectionViewBox>;
+    return (
+      <CenteredTextBox>
+        <Typography variant="h6">Event has no messages</Typography>
+      </CenteredTextBox>
+    );
   }
 
   const [tab, setTab] = useState(0);
@@ -67,6 +76,7 @@ export const SelectionView = (props: SelectionViewProps) => {
         <Tabs
           value={tab}
           onChange={(_, newTab) => setTab(newTab)}
+          variant={"scrollable"}
           aria-label="simple tabs example"
         >
           {event.messages.map((_, index) => (
@@ -80,7 +90,7 @@ export const SelectionView = (props: SelectionViewProps) => {
         </Tabs>
       </AppBar>
       {event.messages.map((message, index) => (
-        <TabPanel value={tab} index={index}>
+        <TabPanel value={tab} index={index} key={index}>
           {typeof message === "string"
             ? message
             : JSON.stringify(message, null, 2)}
@@ -92,4 +102,13 @@ export const SelectionView = (props: SelectionViewProps) => {
 
 const SelectionViewBox = styled(Box)`
   width: 100%;
+  min-width: 0;
+`;
+
+const CenteredTextBox = styled(Box)`
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

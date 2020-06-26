@@ -1,6 +1,12 @@
 import * as React from "react";
 
-import { Box } from "@material-ui/core";
+import {
+  AppBar,
+  Box,
+  CssBaseline,
+  Toolbar,
+  Typography
+} from "@material-ui/core";
 import styled from "styled-components";
 
 import { EventData } from "@common/event";
@@ -23,6 +29,15 @@ const getDummyEvents = (count: number): EventData[] => {
         {
           someResponseData: `Hello response ${i}`
         },
+        "Just a string",
+        "Just a string",
+        "Just a string",
+        "Just a string",
+        "Just a string",
+        "Just a string",
+        "Just a string",
+        "Just a string",
+        "Just a string",
         "Just a string"
       ]
     });
@@ -37,18 +52,41 @@ export const App = () => {
   );
 
   return (
-    <MainBox>
-      <EventsView events={events} onSelect={setSelectedEvent} />
-      <SelectionView selectedEvent={selectedEvent} />
-    </MainBox>
+    <>
+      <CssBaseline />
+      <FulscreenBox>
+        <Box>
+          <AppBar position="static">
+            <Toolbar>
+              <Typography variant="h6">Simple Event Logger</Typography>
+            </Toolbar>
+          </AppBar>
+        </Box>
+        <MainBox>
+          <EventsView events={events} onSelect={setSelectedEvent} />
+          <SelectionView selectedEvent={selectedEvent} />
+        </MainBox>
+      </FulscreenBox>
+    </>
   );
 };
 
+const FulscreenBox = styled(Box)`
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
 const MainBox = styled(Box)`
   width: 100%;
-  height: 100vh;
   padding: 0;
   margin: 0;
+  flex: 1 0;
+  min-height: 0;
   display: flex;
   flex-direction: row;
 `;
