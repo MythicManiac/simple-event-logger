@@ -1,0 +1,9 @@
+{
+  "name": "EventLogger",
+  "version": "0.1.0",
+  "description": "A simple event logging service and dashboard with no configuration required",
+  "main": "index.ts",
+  "repository": "https://github.com/MythicManiac/EventLogger",
+  "author": "Mythic <mythicmaniac@gmail.com>",
+  "license": "MIT"
+}
