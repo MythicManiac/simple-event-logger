@@ -1,7 +1,6 @@
 import express = require("express");
 import bodyParser = require("body-parser");
-import { EventData } from "@common/event";
-import { v4 as uuidv4 } from "uuid";
+import { enrichEvent, ValidatedData } from "../common/event";
 
 const LISTEN_PORT = 8090;
 const MAX_HISTORY = 30;
@@ -16,12 +15,6 @@ interface Event {
 }
 
 let events: Event[] = [];
-
-interface ValidatedData {
-  title?: string;
-  messages: any[];
-  messageTitles?: string[];
-}
 
 // TODO: Use JSON schema
 function validateIncomingEventData(
@@ -62,24 +55,6 @@ function validateIncomingEventData(
       }
     };
   }
-}
-
-function enrichEvent(data: ValidatedData): EventData {
-  const id = uuidv4();
-  let messageTitles = data.messageTitles;
-  if (!messageTitles) {
-    messageTitles = [];
-    for (let i = 0; i < data.messages.length; i++) {
-      messageTitles[i] = `Message ${i}`;
-    }
-  }
-  return {
-    id: id,
-    timestamp: new Date(),
-    title: data.title || `Event ${id}`,
-    messages: data.messages,
-    messageTitles: messageTitles
-  };
 }
 
 app.post("/api/event/", (req, res) => {
